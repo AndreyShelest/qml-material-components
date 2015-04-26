@@ -1,0 +1,4 @@
+module Bocman
+MenuBackButton 0.1 MenuBackButton.qml
+BlindView 0.1 BlindView.qml
+FloatingSidebar 0.1 FloatingSidebar.qml

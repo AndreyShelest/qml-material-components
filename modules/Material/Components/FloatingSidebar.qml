@@ -30,19 +30,18 @@ import Material.ListItems 0.1 as ListItem
     \endqml
 */
 PopupBase {
-    id: menuoverlay
+    id: menuOverlay
 
     property bool floating: true
-    property bool expanded: false
+    property bool expanded: floating ? false : true
 
     property string mode: "left" // or "right"
 
     property alias slideArea: __slideArea
     property alias slideAreaWidth: __slideArea.width
 
-    overlayColor: Qt.rgba(0, 0.1, 0.2, 0.6 - Math.abs(menuTranslate.x/menuContainer.width))
+    overlayColor: Qt.rgba(0, 0.1, 0.2, 0.6)
 
-    opacity: showing ? 1 : 0
     visible: opacity > 0
 
     anchors {
@@ -57,11 +56,7 @@ PopupBase {
     signal openned()
     signal closed()
 
-    Behavior on opacity {
-        NumberAnimation { duration: 300 }
-    }
-
-    Keys.onEscapePressed: menuoverlay.hide()
+    Keys.onEscapePressed: menuOverlay.hide()
 
     property bool autoFlick: true
 
@@ -75,8 +70,8 @@ PopupBase {
             bottom: parent.bottom
         }
 
-        elevation: 4
-        width: units.dp(250)
+        elevation: floating ? 4 : 1
+        width: units.dp(350)
 
         Flickable {
             id: flickable
@@ -112,22 +107,16 @@ PopupBase {
         }
     }
 
-Translate {
-    id: menuTranslate;
-    x: __expanded_binding()
-    Behavior on x {
-        NumberAnimation { easing.type: Easing.OutQuad; duration: 300 }
-    }
-}
-transform: menuTranslate
-
-    function startSlideTransform(_mouse) {
-
-        if (expanded) {
-            _mouse.accepted = false;
-            console.log("gesureStartX", _mouse.x)
-            return;
+    Translate {
+        id: menuTranslate;
+        x: __expanded_binding()
+        Behavior on x {
+            NumberAnimation { easing.type: Easing.OutQuad; duration: 300 }
         }
+    }
+    transform: menuTranslate
+
+    function startSlideTransform() {
 
         var startTranslateX = menuTranslate.x;
         menuTranslate.x = Qt.binding(
@@ -147,43 +136,72 @@ transform: menuTranslate
         var condition = mode === "left" ?
                     (menuTranslate.x > (-menuContainer.width / 2)) :
                     (menuTranslate.x < (menuContainer.width / 2))
-        if (condition) {
-            show();
-        } else {
-            hide();
-        }
 
+        if (condition === false) close();
+
+        expanded = condition;
         menuTranslate.x = Qt.binding(
                     __expanded_binding
                     )
     }
 
-    onSlideAreaChanged: {
-        if (typeof slideArea === "undefined") {
-            console.log("Empty MouseArea item");
-            return;
+    onShowingChanged: { if (showing === false) expanded = false; }
+    onExpandedChanged: {
+        if (expanded) {
+            if (floating) {
+                open();
+            }
+            /*emit*/ openned();
+        } else {
+            if (floating) {
+                close();
+            }
+            /*emit*/ closed();
         }
     }
 
-    onShowingChanged: {if (showing === false) hide()}
+    onFloatingChanged: {
+        var adjoiningItem = pageStack;
 
-    function show() {
-        expanded = true;
-        open();
+        if (!adjoiningItem ) {
+            console.error("[ adjoiningItem ] is empty! Not-floating mode will not work.");
+            return;
+        }
+
+        if (mode === "left") {
+            if (!floating) {
+                adjoiningItem.anchors.leftMargin = Qt.binding(
+                            function (){ return menuContainer.width + menuTranslate.x; }
+                            );
+                parent = adjoiningItem.parent;
+                menuOverlay.anchors.top = adjoiningItem.top;
+            } else {
+                adjoiningItem.anchors.leftMargin = 0;
+                menuOverlay.anchors.top = parent.top;
+            }
+        } else { //mode === "right"
+            if (!floating) {
+                adjoiningItem.anchors.rightMargin = Qt.binding(
+                            function (){ return menuContainer.width - menuTranslate.x; }
+                            );
+                parent = adjoiningItem.parent;
+                menuOverlay.anchors.top = adjoiningItem.top;
+            } else {
+                adjoiningItem.anchors.rightMargin = 0;
+                menuOverlay.anchors.top = parent.top;
+            }
+        }
+
     }
 
-    function hide() {
-        expanded = false;
-        close();
-    }
-
-    function __expanded_binding()
-    {
+    function __expanded_binding() {
         return expanded ? 0 : (mode == "left" ? -menuContainer.width : menuContainer.width);
     }
 
     MouseArea {
         id: __slideArea
+
+        property alias color: __slideAreaRect.color
         width: units.dp(20)
         visible: floating
 
@@ -195,18 +213,17 @@ transform: menuTranslate
         }
         propagateComposedEvents: true
 
-        parent: menuoverlay.parent
-//        z: 10 // place upper all slidebar items
+        parent: menuOverlay.parent
+        //        z: 10 // place upper all slidebar items
 
-        onPressed: startSlideTransform(mouse)
+        onPressed: startSlideTransform()
         onReleased: stopSlideTransform()
 
         // Indicates area for a slide.
-        // For debug purposes only.
         Rectangle {
+            id: __slideAreaRect
             anchors.fill: parent
-            visible: false
-            color: "blue"
+            color: "transparent"
             opacity: 0.5
         }
     }

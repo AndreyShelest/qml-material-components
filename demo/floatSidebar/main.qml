@@ -5,6 +5,9 @@ import Material.Components 0.1 as MGui
 ApplicationWindow {
     id: demo
 
+    width: 1280
+    height: 720
+
     theme {
         accentColor: "#009688"
     }
@@ -28,47 +31,64 @@ ApplicationWindow {
             Action {
                 iconName: "action/settings"
                 name: "Settings"
-                onTriggered: sidebar.show()
+                onTriggered: sidebar.expanded = !sidebar.expanded
             }
         ]
-        MouseArea {
-            anchors.fill: parent
-            onPressed: console.log("pressed")
-            onReleased: console.log("released")
+
+        Column {
+            anchors.centerIn: parent
+
+            Checkbox {
+                id: expanded_box_left
+                text: "Expanded [left]"
+                onCheckedChanged: sidebar.expanded = checked
+            }
+            Checkbox {
+                id: floating_box_left
+                checked: false
+                text: "Floating  [left]"
+            }
+            Checkbox {
+                id: expanded_box_right
+                text: "Expanded [right]"
+                onCheckedChanged: sidebar_right.expanded = checked
+            }
+            Checkbox {
+                id: floating_box_right
+                checked: false
+                text: "Floating  [right]"
+            }
         }
 
     }
 
     MGui.FloatingSidebar {
         id: sidebar
+        floating: floating_box_left.checked
+        onExpandedChanged: expanded_box_left.checked = expanded
 
-//        mode: "right" //default is "left"
+        MouseArea {
+            anchors {
+                left: parent.left;
+                right: parent.right
+            }
+            height: units.dp(1200)
+            onPressed: console.log("pressed")
+            onReleased: console.log("released")
+            onPositionChanged: console.log(mouse.x,mouse.y)
+        }
+    }
 
-        Column{
-            width: parent.width
-            height: childrenRect.height
-            spacing: units.dp(3)
-            Rectangle{
-                color: "gray"
-                anchors {left: parent.left; right: parent.right}
-                height: units.dp(300)
-                MouseArea {
-                    anchors.fill: parent
-                    onPressed: console.log("pressed")
-                    onReleased: console.log("released")
-                    onPositionChanged: console.log(mouse.x,mouse.y)
-                }
-            }
-            Rectangle{
-                color: "green"
-                anchors {left: parent.left; right: parent.right}
-                height: units.dp(400)
-            }
-            Rectangle{
-                color: "yellow"
-                anchors {left: parent.left; right: parent.right}
-                height: units.dp(400)
-            }
+    MGui.FloatingSidebar {
+        id: sidebar_right
+        floating: floating_box_right.checked
+        onExpandedChanged: expanded_box_right.checked = expanded
+        mode: "right" //default is "left"
+
+        Rectangle{
+            color: "yellow"
+            anchors {left: parent.left; right: parent.right}
+            height: units.dp(1200)
         }
     }
 }

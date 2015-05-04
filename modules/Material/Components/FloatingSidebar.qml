@@ -32,7 +32,7 @@ import Material.ListItems 0.1 as ListItem
 PopupBase {
     id: menuOverlay
 
-    property bool floating: true
+    property bool floating: Device.isMobile
     property bool expanded: floating ? false : true
 
     property string mode: "left" // or "right"
@@ -71,7 +71,7 @@ PopupBase {
         }
 
         elevation: floating ? 4 : 1
-        width: units.dp(350)
+        width: units.dp(250)
 
         Flickable {
             id: flickable

@@ -33,7 +33,7 @@ Column{
             width: mbButtom.width
             height: mbButtom._lineHeight
             antialiasing: true
-            transform: Translate{x:translateX;y:translateY}
+            transform: Translate {x:translateX;y:translateY}
         }
     }
 }
@@ -48,17 +48,46 @@ Column{
         State {
             name: "back"
             when: !menu
-            PropertyChanges { target: mbButtom; rotation: 180 }
-            PropertyChanges { target: _linesRepeater.itemAt(0); rotation: 45; width: ((mbButtom.height / 2)/Math.sin(45)); translateX: (mbButtom.height / 2)-_lineHeight/2; translateY:(mbButtom._lineHeight / 1.41)}
-            PropertyChanges { target: _linesRepeater.itemAt(1); translateX: -_lineHeight/2;}
-            PropertyChanges { target: _linesRepeater.itemAt(2); rotation: -45; width:((mbButtom.height / 2)/Math.sin(45)); translateX: (mbButtom.height / 2)-_lineHeight/2; translateY:-(mbButtom._lineHeight / 1.41)}
+            PropertyChanges {
+              target: mbButtom; rotation: 180
+            }
+
+            PropertyChanges {
+              target: _linesRepeater.itemAt(0);
+              rotation: 45;
+              width: ((mbButtom.height / 2)/Math.sin(45));
+              translateX: (mbButtom.height / 2)-_lineHeight/2;
+              translateY:(mbButtom._lineHeight / 1.41)
+            }
+
+            PropertyChanges {
+              target: _linesRepeater.itemAt(1);
+              translateX: -_lineHeight/2;
+            }
+
+            PropertyChanges {
+              target: _linesRepeater.itemAt(2);
+              rotation: -45;
+              width:((mbButtom.height / 2)/Math.sin(45));
+              translateX: (mbButtom.height / 2)-_lineHeight/2;
+              translateY:-(mbButtom._lineHeight / 1.41)
+            }
         }
     ]
 
     transitions: [
         Transition {
-            RotationAnimation { target: mbButtom; direction: RotationAnimation.Clockwise; duration: animationDuration; easing.type: Easing.InOutQuad }
-            PropertyAnimation { targets: [_linesRepeater.itemAt(0),_linesRepeater.itemAt(1),_linesRepeater.itemAt(2)]; properties: "rotation, width, translateX, translateY"; duration: animationDuration; easing.type: Easing.InOutQuad }
+            RotationAnimation {
+              target: mbButtom;
+              direction: RotationAnimation.Clockwise;
+              duration: animationDuration; easing.type: Easing.InOutQuad
+            }
+
+            PropertyAnimation {
+              targets: [ _linesRepeater.itemAt(0), _linesRepeater.itemAt(1), _linesRepeater.itemAt(2) ];
+                properties: "rotation, width, translateX, translateY";
+                duration: animationDuration; easing.type: Easing.InOutQuad
+            }
         }
     ]
 
@@ -78,8 +107,6 @@ Column{
             onClicked: {
                 if (menu) menuClicked()
                 else backClicked();
-
-//                menu = !menu
             }
         }
 

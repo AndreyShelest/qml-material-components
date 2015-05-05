@@ -2,3 +2,5 @@ module Bocman
 MenuBackButton 0.1 MenuBackButton.qml
 BlindView 0.1 BlindView.qml
 FloatingSidebar 0.1 FloatingSidebar.qml
+MainWindow 0.1 MainWindow.qml
+ThemeChanger 0.1 ThemeChanger.qml

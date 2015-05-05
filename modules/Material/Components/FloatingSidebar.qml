@@ -39,6 +39,7 @@ PopupBase {
 
     property alias slideArea: __slideArea
     property alias slideAreaWidth: __slideArea.width
+    property alias menuWidth: menuContainer.width
 
     overlayColor: Qt.rgba(0, 0.1, 0.2, 0.6)
 

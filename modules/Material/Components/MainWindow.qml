@@ -65,5 +65,10 @@ ApplicationWindow {
         menuWidth: Device.isMobile ? units.dp(300) : units.dp(400)
     }
 
-    ThemeChanger { id: themeChanger}
+    ThemeChanger { id: themeChanger }
+    Snackbar { id: snackbar }
+
+    function notify (text) {
+      snackbar.open(text);
+    }
 }

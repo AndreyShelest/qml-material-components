@@ -12,7 +12,12 @@ MGui.MainWindow {
             color: "green"
             MouseArea {
                 anchors.fill: parent
-                onClicked: rightSidebar.expanded = !rightSidebar.expanded
+                onClicked: {
+                    rightSidebar.expanded = !rightSidebar.expanded
+                    notify( rightSidebar.expanded ?
+                               "Info menu was oppened!" :
+                               "Info menu was hidden!")
+                }
             }
         }
 

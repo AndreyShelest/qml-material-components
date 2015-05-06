@@ -26,6 +26,7 @@ ApplicationWindow {
     property alias leftSidebarContent: _sidebar.contents
     property alias rightSidebar: _sidebar_right
     property alias rightSidebarContent: _sidebar_right.contents
+    default property alias contents: page.data
 
     initialPage: page
     Page {

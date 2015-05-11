@@ -32,6 +32,8 @@ import Material.ListItems 0.1 as ListItem
 PopupBase {
     id: menuOverlay
 
+    overlayLayer: "dialogOverlayLayer"
+
     property bool floating: Device.isMobile !== undefined ? Device.isMobile : false
     property bool expanded: floating ? false : true
 
@@ -54,9 +56,6 @@ PopupBase {
 
     default property alias contents: contents.data
 
-    signal openned()
-    signal closed()
-
     Keys.onEscapePressed: menuOverlay.hide()
 
     property bool autoFlick: true
@@ -72,7 +71,7 @@ PopupBase {
         }
 
         elevation: floating ? 4 : 1
-        width: units.dp(250)
+        width: Units.dp(250)
 
         Component.onCompleted: __menu_anchoring()
 
@@ -154,12 +153,10 @@ PopupBase {
             if (floating) {
                 open();
             }
-            /*emit*/ openned();
         } else {
             if (floating) {
                 close();
             }
-            /*emit*/ closed();
         }
     }
 
@@ -207,7 +204,7 @@ PopupBase {
         id: __slideArea
 
         property alias color: __slideAreaRect.color
-        width: units.dp(20)
+        width: Units.dp(20)
         visible: floating
 
         anchors {

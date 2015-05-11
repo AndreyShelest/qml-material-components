@@ -7,7 +7,7 @@ MGui.MainWindow {
 
     leftSidebarContent:
         Rectangle {
-            width: units.dp(1200)
+            width: Units.dp(1200)
             height : width
             color: "green"
             MouseArea {
@@ -20,5 +20,4 @@ MGui.MainWindow {
                 }
             }
         }
-
 }

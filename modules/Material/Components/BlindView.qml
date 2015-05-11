@@ -3,8 +3,8 @@ import Material 0.1
 
 View {
     id: __blindView
-    width: units.dp(300)
-    height: units.dp(250)
+    width: Units.dp(300)
+    height: Units.dp(250)
     elevation: flat ? 0 : 1
 
     property bool flat: false
@@ -14,7 +14,7 @@ View {
     property alias iconColor: __expandButton.color // black/white
 
     border.color: flat ? Qt.rgba(0,0,0,0.2) : "transparent"
-    radius: fullWidth || fullHeight ? 0 : units.dp(2)
+    radius: fullWidth || fullHeight ? 0 : Units.dp(2)
 
     Item {
         id: __lowerArea
@@ -51,10 +51,10 @@ View {
         anchors {
             top: parent.top
             right: parent.right
-            margins: units.dp(8)
+            margins: Units.dp(8)
         }
 
-        height: units.dp(32)
+        height: Units.dp(32)
         width: height
         visible: !blindOpen
         name: "navigation/expand_more"

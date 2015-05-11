@@ -7,6 +7,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     engine.load(QUrl(QStringLiteral("qrc:/splashScreen.qml")));
+    engine.addImportPath("/Users/andrey/Project/build_root/qml-libs/");
 
     return app.exec();
 }

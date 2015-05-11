@@ -10,9 +10,11 @@ ApplicationWindow {
     visible: true
 
     theme {
-        accentColor: "#009688"
+        primaryColor: Palette.colors["blue"]["500"]
+        primaryDarkColor: Palette.colors["blue"]["700"]
+        accentColor: Palette.colors["teal"]["500"]
+        tabHighlightColor: "white"
     }
-
     initialPage: page
     Page {
         id: page
@@ -39,22 +41,22 @@ ApplicationWindow {
         Column {
             anchors.centerIn: parent
 
-            Checkbox {
+            CheckBox {
                 id: expanded_box_left
                 text: "Expanded [left]"
                 onCheckedChanged: sidebar.expanded = checked
             }
-            Checkbox {
+            CheckBox {
                 id: floating_box_left
                 text: "Floating  [left]"
                 onCheckedChanged: sidebar.floating = checked
             }
-            Checkbox {
+            CheckBox {
                 id: expanded_box_right
                 text: "Expanded [right]"
                 onCheckedChanged: sidebar_right.expanded = checked
             }
-            Checkbox {
+            CheckBox {
                 id: floating_box_right
                 text: "Floating  [right]"
                 onCheckedChanged: sidebar_right.floating = checked
@@ -73,7 +75,7 @@ ApplicationWindow {
                 left: parent.left;
                 right: parent.right
             }
-            height: units.dp(1200)
+            height: Units.dp(1200)
             onPressed: console.log("pressed")
             onReleased: console.log("released")
             onPositionChanged: console.log(mouse.x,mouse.y)
@@ -89,7 +91,7 @@ ApplicationWindow {
         Rectangle{
             color: "yellow"
             anchors {left: parent.left; right: parent.right}
-            height: units.dp(1200)
+            height: Units.dp(1200)
         }
     }
 }

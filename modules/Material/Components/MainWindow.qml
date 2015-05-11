@@ -25,6 +25,8 @@ ApplicationWindow {
     property alias rightSidebarContent: _sidebar_right.contents
     default property alias contents: page.data
 
+    signal settings()
+
     initialPage: page
     Page {
         id: page
@@ -45,7 +47,7 @@ ApplicationWindow {
             Action {
                 iconName: "action/settings"
                 name: "Settings"
-                onTriggered: _sidebar.expanded = !_sidebar.expanded
+                onTriggered: settings()
             }
         ]
 

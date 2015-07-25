@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.3
 import Material 0.1
 import Material.ListItems 0.1 as ListItem
 
@@ -42,6 +42,7 @@ PopupBase {
     property alias slideArea: __slideArea
     property alias slideAreaWidth: __slideArea.width
     property alias menuWidth: menuContainer.width
+    property alias menuBackground: menuContainer.backgroundColor
 
     overlayColor: Qt.rgba(0, 0.1, 0.2, 0.6)
 
@@ -188,9 +189,11 @@ PopupBase {
                             );
                 parent = adjoiningItem.parent;
                 menuOverlay.anchors.top = adjoiningItem.top;
+                expanded = true;
             } else {
                 adjoiningItem.anchors.rightMargin = 0;
                 menuOverlay.anchors.top = parent.top;
+                expanded = true;
             }
         }
 

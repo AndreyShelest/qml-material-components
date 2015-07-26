@@ -36,11 +36,13 @@ PopupBase {
 
     property bool floating: Device.isMobile !== undefined ? Device.isMobile : false
     property bool expanded: floating ? false : true
+    property Action backAction: action
 
     property string mode: "left" // or "right"
 
     property alias slideArea: __slideArea
     property alias slideAreaWidth: __slideArea.width
+
     property alias menuWidth: menuContainer.width
     property alias menuBackground: menuContainer.backgroundColor
 
@@ -61,6 +63,14 @@ PopupBase {
 
     property bool autoFlick: true
 
+    Action {
+        id: action
+        iconName: "navigation/menu"
+        name: "Floating Sidebar"
+        visible: floating
+        onTriggered: expanded = true
+    }
+
     View {
         id: menuContainer
 
@@ -76,37 +86,14 @@ PopupBase {
 
         Component.onCompleted: __menu_anchoring()
 
-        Flickable {
-            id: flickable
+        Item {
+            id: contents
 
             clip: true
 
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-                bottom: parent.bottom
-                rightMargin: mode === "left" ? 1 : 0
-                leftMargin: mode === "right" ? 1 : 0
-            }
-
-            contentWidth: width
-            contentHeight: autoFlick ? contents.height : height
-
-            interactive: contentHeight > height
-            boundsBehavior: Flickable.StopAtBounds
-            maximumFlickVelocity: 700 //Need to calculate this
-
-            Item {
-                id: contents
-
-                width: flickable.width
-                height: autoFlick ? childrenRect.height : flickable.height
-            }
-        }
-
-        Scrollbar {
-            flickableItem: flickable
+            anchors.fill: parent
+            anchors.rightMargin: mode === "left" ? 1 : 0
+            anchors.leftMargin: mode === "right" ? 1 : 0
         }
     }
 

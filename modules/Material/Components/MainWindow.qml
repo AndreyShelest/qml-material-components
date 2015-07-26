@@ -5,10 +5,10 @@ import Material.Components 0.1 as MGui
 ApplicationWindow {
     id: mainWindow
 
-    width: 1280
-    height: 720
+    width: 800
+    height: 600
     minimumHeight: Units.dp(500)
-    minimumWidth: (_sidebar.menuWidth + _sidebar_right.menuWidth) + Units.dp(150)
+    minimumWidth: _sidebar.menuWidth + Units.dp(150)
 
     visible: true
 
@@ -21,51 +21,19 @@ ApplicationWindow {
 
     property alias leftSidebar: _sidebar
     property alias leftSidebarContent: _sidebar.contents
-    property alias rightSidebar: _sidebar_right
-    property alias rightSidebarContent: _sidebar_right.contents
-    default property alias contents: page.data
 
     signal settings()
 
-    initialPage: page
-    Page {
-        id: page
-        title: "Test Page"
-
-        actions: [
-            Action {
-                iconName: "image/color_lens"
-                name: "Colors"
-                onTriggered: themeChanger.open()
-            },
-
-            Action {
-                iconName: "action/search"
-                name: "Search"
-            },
-
-            Action {
-                iconName: "action/settings"
-                name: "Settings"
-                onTriggered: settings()
-            }
-        ]
-
-    }
-
     MGui.FloatingSidebar {
         id: _sidebar
-        menuWidth: Device.isMobile ? Units.dp(250) : Units.dp(300)
+        menuBackground: Palette.colors["grey"]["200"]
+        floating: width < menuWidth * 2
+
+        //menuWidth: Device.isMobile ? Units.dp(250) : Units.dp(300)
+        contents: pageStack.currentItem && pageStack.currentItem.leftMenu ?
+                    pageStack.currentItem.leftMenu : null
     }
 
-    MGui.FloatingSidebar {
-        id: _sidebar_right
-        mode: "right" //default is "left"
-        expanded: false
-        menuWidth: Device.isMobile ? Units.dp(300) : Units.dp(400)
-    }
-
-    ThemeChanger { id: themeChanger }
     Snackbar { id: snackbar }
 
     function notify (text) {

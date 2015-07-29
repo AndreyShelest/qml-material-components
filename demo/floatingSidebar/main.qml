@@ -5,8 +5,8 @@ import Material.Components 0.1 as MGui
 ApplicationWindow {
     id: demo
 
-    width: 1280
-    height: 720
+    width: 800
+    height: 600
     visible: true
 
     theme {
@@ -18,25 +18,13 @@ ApplicationWindow {
     initialPage: page
     Page {
         id: page
-        title: "Test Page"
+        title: "Floating Sidebar test Page"
 
-        actions: [
-            Action {
-                iconName: "image/color_lens"
-                name: "Colors"
-            },
-
-            Action {
-                iconName: "action/search"
-                name: "Search"
-            },
-
-            Action {
-                iconName: "action/settings"
-                name: "Settings"
-                onTriggered: sidebar.expanded = !sidebar.expanded
-            }
-        ]
+        Rectangle {
+            width: 200
+            height: width
+            color: 'red'
+        }
 
         Column {
             anchors.centerIn: parent
@@ -67,14 +55,12 @@ ApplicationWindow {
 
     MGui.FloatingSidebar {
         id: sidebar
+        floating: menuWidth > demo.width / 2
         onFloatingChanged: floating_box_left.checked = floating
         onExpandedChanged: expanded_box_left.checked = expanded
 
         MouseArea {
-            anchors {
-                left: parent.left;
-                right: parent.right
-            }
+            anchors.fill: parent
             height: Units.dp(1200)
             onPressed: console.log("pressed")
             onReleased: console.log("released")
@@ -82,16 +68,16 @@ ApplicationWindow {
         }
     }
 
-    MGui.FloatingSidebar {
-        id: sidebar_right
-        onFloatingChanged: floating_box_right.checked = floating
-        onExpandedChanged: expanded_box_right.checked = expanded
-        mode: "right" //default is "left"
+//    MGui.FloatingSidebar {
+//        id: sidebar_right
+//        onFloatingChanged: floating_box_right.checked = floating
+//        onExpandedChanged: expanded_box_right.checked = expanded
+//        mode: "right" //default is "left"
 
-        Rectangle{
-            color: "yellow"
-            anchors {left: parent.left; right: parent.right}
-            height: Units.dp(1200)
-        }
-    }
+//        Rectangle{
+//            color: "yellow"
+//            anchors {left: parent.left; right: parent.right}
+//            height: Units.dp(1200)
+//        }
+//    }
 }

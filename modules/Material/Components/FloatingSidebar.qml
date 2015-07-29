@@ -12,10 +12,6 @@ import Material.ListItems 0.1 as ListItem
     On mobile devices sidebar becomes floating.
     It means that menu will be hidden by default and can be expanded by gestures from screen sides.
 
-    By default, the sidebar has a flickable built in, and whatever contents are added
-    will be placed in the flickable. When you want this disabled, or want to fill the
-    entire sidebar, set the autoFill property to false.
-
     Examples:
     \qml
         MouseArea {
@@ -25,7 +21,7 @@ import Material.ListItems 0.1 as ListItem
         FloatingSidebar {
             id: fbar
 
-            // Anchoring is automatic
+            // Anchoring is not automatic
         }
     \endqml
 */
@@ -35,16 +31,13 @@ PopupBase {
     overlayLayer: "dialogOverlayLayer"
 
     property bool floating: Device.isMobile !== undefined ? Device.isMobile : false
-    property bool expanded: floating ? false : true
+    property bool expanded: Device.isMobile !== undefined ? !Device.isMobile : true
     property Action backAction: action
 
-    property string mode: "left" // or "right"
+    property alias menuWidth: __menuContent.width
+    property alias menuBackground: __menuContent.backgroundColor
 
-    property alias slideArea: __slideArea
-    property alias slideAreaWidth: __slideArea.width
-
-    property alias menuWidth: menuContainer.width
-    property alias menuBackground: menuContainer.backgroundColor
+    default property alias contents: __menuContent.data
 
     overlayColor: Qt.rgba(0, 0.1, 0.2, 0.6)
 
@@ -57,11 +50,7 @@ PopupBase {
         right: parent.right
     }
 
-    default property alias contents: contents.data
-
-    Keys.onEscapePressed: menuOverlay.hide()
-
-    property bool autoFlick: true
+    Keys.onEscapePressed: expanded = false
 
     Action {
         id: action
@@ -71,152 +60,106 @@ PopupBase {
         onTriggered: expanded = true
     }
 
-    View {
+    Item {
         id: menuContainer
 
         anchors {
-            left: mode === "left" ? parent.left : undefined
-            right: mode === "right" ? parent.right : undefined
+            left: parent.left
             top: parent.top
             bottom: parent.bottom
         }
 
-        elevation: floating ? 4 : 1
-        width: Units.dp(250)
+        width: childrenRect.width
 
-        Component.onCompleted: __menu_anchoring()
+        Translate {
+            id: menuTranslate;
+        }
+        transform: menuTranslate
 
-        Item {
-            id: contents
+        states: [
+            State {
+                when: expanded
+                name: "show"
+                PropertyChanges { target: menuTranslate; x: 0 }
+                PropertyChanges { target: pageStack; anchors.leftMargin: floating ? 0 : __menuContent.width + menuTranslate.x }
+            },
+            State {
+                when: !expanded
+                name: "hide"
+                PropertyChanges { target: menuTranslate; x: -__menuContent.width }
+            }
+        ]
 
+        transitions: [
+            Transition {
+                from: "show"
+                to: "hide"
+                NumberAnimation { properties: "x,anchors.leftMargin"; easing.type: Easing.OutQuad; duration: 300 }
+            },
+            Transition {
+                from: "hide"
+                to: "show"
+                NumberAnimation { properties: "x,anchors.leftMargin"; easing.type: Easing.OutQuad; duration: 300 }
+            }
+        ]
+
+        View {
+            id: __menuContent
+
+            elevation: floating ? 4 : 1
+            width: Units.dp(250)
             clip: true
 
-            anchors.fill: parent
-            anchors.rightMargin: mode === "left" ? 1 : 0
-            anchors.leftMargin: mode === "right" ? 1 : 0
-        }
-    }
-
-    Translate {
-        id: menuTranslate;
-        x: __expanded_binding()
-        Behavior on x {
-            NumberAnimation { easing.type: Easing.OutQuad; duration: 300 }
-        }
-    }
-    transform: menuTranslate
-
-    function startSlideTransform() {
-
-        var startTranslateX = menuTranslate.x;
-        menuTranslate.x = Qt.binding(
-                    function (){
-
-                        var result = mode === "left" ?
-                                    Math.min(startTranslateX + slideArea.mouseX, 0) :
-                                    Math.max(startTranslateX + slideArea.mouseX, 0);
-                        return result;
-                    }
-                    )
-        open()
-    }
-
-    function stopSlideTransform() {
-
-        var condition = mode === "left" ?
-                    (menuTranslate.x > (-menuContainer.width / 2)) :
-                    (menuTranslate.x < (menuContainer.width / 2))
-
-        if (condition === false) close();
-
-        expanded = condition;
-        menuTranslate.x = Qt.binding(
-                    __expanded_binding
-                    )
-    }
-
-    onShowingChanged: { if (showing === false) expanded = false; }
-    onExpandedChanged: {
-        if (expanded) {
-            if (floating) {
-                open();
-            }
-        } else {
-            if (floating) {
-                close();
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: parent.bottom
+                rightMargin: Units.dp(1)
             }
         }
     }
-
-    onFloatingChanged: __menu_anchoring()
-
-    function __menu_anchoring() {
-        var adjoiningItem = pageStack;
-
-        if (!adjoiningItem ) {
-            console.error("[ adjoiningItem ] is empty! Not-floating mode will not work.");
-            return;
+    onFloatingChanged: {
+        if(!floating) {
+            expanded = true;
         }
-
-        if (mode === "left") {
-            if (!floating) {
-                adjoiningItem.anchors.leftMargin = Qt.binding(
-                            function (){ return menuContainer.width + menuTranslate.x; }
-                            );
-                parent = adjoiningItem.parent;
-                menuOverlay.anchors.top = adjoiningItem.top;
-            } else {
-                adjoiningItem.anchors.leftMargin = 0;
-                menuOverlay.anchors.top = parent.top;
-            }
-        } else { //mode === "right"
-            if (!floating) {
-                adjoiningItem.anchors.rightMargin = Qt.binding(
-                            function (){ return menuContainer.width - menuTranslate.x; }
-                            );
-                parent = adjoiningItem.parent;
-                menuOverlay.anchors.top = adjoiningItem.top;
-                expanded = true;
-            } else {
-                adjoiningItem.anchors.rightMargin = 0;
-                menuOverlay.anchors.top = parent.top;
-                expanded = true;
-            }
-        }
-
     }
 
-    function __expanded_binding() {
-        return expanded ? 0 : (mode == "left" ? -menuContainer.width : menuContainer.width);
-    }
-
-    MouseArea {
-        id: __slideArea
-
-        property alias color: __slideAreaRect.color
-        width: Units.dp(20)
-        visible: floating
-
-        anchors {
-            left: mode === "left" ? parent.left : undefined
-            right: mode === "right" ? parent.right : undefined
-            top: parent.top
-            bottom: parent.bottom
+    states: [
+        State {
+            when: !floating
+            name: "overlayOff"
+            ParentChange { target: menuContainer; parent: pageStack.parent }
+            AnchorChanges { target: menuContainer; anchors.top: pageStack.top }
+        },
+        State {
+            when: floating && expanded
+            name: "overlayOn"
+            ParentChange { target: menuContainer; parent: menuOverlay }
         }
-        propagateComposedEvents: true
+    ]
 
-        parent: menuOverlay.parent
-        //        z: 10 // place upper all slidebar items
+    transitions: [
+        Transition {
+            from: "*"
+            to: "overlayOn"
+            ScriptAction { script: open() }
+        },
+        Transition {
+            from: "overlayOn"
+            to: "*"
+            SequentialAnimation {
+                ScriptAction { script: close() }
+                ParentAnimation {}
+               // AnchorAnimation { }
+            }
+        }
+    ]
 
-        onPressed: startSlideTransform()
-        onReleased: stopSlideTransform()
-
-        // Indicates area for a slide.
-        Rectangle {
-            id: __slideAreaRect
-            anchors.fill: parent
-            color: "transparent"
-            opacity: 0.5
+    //Apply state change if overlay closed by click
+    onClosed: {
+        if (state !== "overlayOff") {
+            state = "overlayOff";
+            expanded = false;
         }
     }
 }

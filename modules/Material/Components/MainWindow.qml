@@ -29,7 +29,7 @@ ApplicationWindow {
         menuBackground: Palette.colors["grey"]["200"]
         floating: width < menuWidth * 2
 
-        //menuWidth: Device.isMobile ? Units.dp(250) : Units.dp(300)
+        menuWidth: Device.isMobile ? Units.dp(250) : Units.dp(300)
         contents: pageStack.currentItem && pageStack.currentItem.leftMenu ?
                     pageStack.currentItem.leftMenu : null
     }

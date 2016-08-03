@@ -16,7 +16,6 @@ Project {
     /* List of plugin directories passed to QML runtime */
     importPaths: [
         "../../modules",
-        "../../../GitHub/qml-material/modules",
-        "../../../GitHub/qml-extras/modules"
+        "/home/ashelest/Development/Projects/FlightGear_Autopilot/contrib/qml-material/modules"
     ]
 }

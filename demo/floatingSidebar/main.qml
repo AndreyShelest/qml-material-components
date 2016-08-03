@@ -5,7 +5,7 @@ import Material.Components 0.1 as MGui
 ApplicationWindow {
     id: demo
 
-    width: 800
+    width: 400
     height: 600
     visible: true
 
@@ -59,12 +59,20 @@ ApplicationWindow {
         onFloatingChanged: floating_box_left.checked = floating
         onExpandedChanged: expanded_box_left.checked = expanded
 
-        MouseArea {
+        ListView {
+            id: __list
             anchors.fill: parent
-            height: Units.dp(1200)
-            onPressed: console.log("pressed")
-            onReleased: console.log("released")
-            onPositionChanged: console.log(mouse.x,mouse.y)
+            model: 20
+            snapMode: ListView.SnapToItem
+            delegate: Rectangle {
+                color: "#"+((1<<24)*Math.random()|0).toString(16)
+                width:__list.width
+                height: __list.height / 4
+                Text {
+                    text: index
+                    anchors.centerIn: parent
+                }
+            }
         }
     }
 

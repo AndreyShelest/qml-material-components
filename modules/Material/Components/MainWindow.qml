@@ -32,6 +32,7 @@ ApplicationWindow {
         menuWidth: Device.isMobile ? Units.dp(250) : Units.dp(300)
         contents: pageStack.currentItem && pageStack.currentItem.leftMenu ?
                     pageStack.currentItem.leftMenu : null
+        visible: false
     }
 
     Snackbar { id: snackbar }
